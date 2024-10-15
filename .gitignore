@@ -8,3 +8,4 @@ appsettings.Development.json
 Capstone.Migrator/appsettings.json
 Capstone.Data.pdb
 collectorApi/
+.DS_Store
