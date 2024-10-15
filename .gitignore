@@ -1,0 +1,10 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea/
+appsettings.Development.json
+Capstone.Migrator/appsettings.json
+Capstone.Data.pdb
+collectorApi/

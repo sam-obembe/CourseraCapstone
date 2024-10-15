@@ -1,0 +1,69 @@
+using System.Text.Json;
+using Capstone.Collector.Models;
+
+namespace Capstone.Collector.ApiClient;
+
+public class CongressApiClient
+{
+   private readonly System.Net.Http.HttpClient _httpClient;
+   private const string GetMembersEndpoint = "/v3/member/congress";
+   private const string GetCongressEndpoint = "/v3/congress/current";
+   private readonly string _apiKey;
+   private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+   private readonly ILogger _logger;
+   
+   public CongressApiClient(string baseUrl, string apiKey,ILogger logger)
+   {
+      _httpClient = new System.Net.Http.HttpClient();
+      _httpClient.BaseAddress = new Uri(baseUrl);
+      this._apiKey = apiKey;
+      _logger = logger;
+   }
+
+   public async Task<CongressMemberResponseDto?> GetMembersAsync(int skip, int take,int congressNumber)
+   {
+      var path = $"{GetMembersEndpoint}/{congressNumber}?api_key={_apiKey}&offset={skip}&limit={take}";
+      _logger.LogInformation($"GET {path}");
+      var response = await _httpClient.GetAsync(path);
+      var data = await HandleJsonResponse<CongressMemberResponseDto>(response);
+      return data;
+   }
+
+   public CongressMemberResponseDto? GetMembers(int skip, int take, int congressNumber)
+   {
+      _logger.LogInformation("Getting members for {}",congressNumber);
+      var path = $"{GetMembersEndpoint}/{congressNumber}?api_key={_apiKey}&offset={skip}&limit={take}";
+      _logger.LogInformation("{}",path);
+      var response = _httpClient.GetAsync(path).Result;
+      _logger.LogInformation("{}",response.StatusCode);
+      var data = HandleJsonResponse<CongressMemberResponseDto>(response);
+      return data.Result;
+   }
+
+   public CongressResponseDto? GetCongress()
+   {
+      var path = $"{GetCongressEndpoint}?api_key={_apiKey}";
+      var response = _httpClient.GetAsync(path);
+      var data = HandleJsonResponse<CongressResponseDto>(response.Result);
+      _logger.LogInformation($"{data.ToString()}");
+      return data.Result;
+   }
+
+   public async Task<CongressResponseDto?> GetCongressAsync()
+   {
+      var path = $"{GetCongressEndpoint}?api_key={_apiKey}";
+      var response = await _httpClient.GetAsync(path);
+      var data = HandleJsonResponse<CongressResponseDto>(response);
+      _logger.LogInformation($"{data.ToString()}");
+      return data.Result;
+   }
+   
+
+   private async Task<T?> HandleJsonResponse<T>(HttpResponseMessage response)
+   {
+      if (!response.IsSuccessStatusCode) return default(T);
+      var json = await response.Content.ReadAsStringAsync();
+      var result = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
+      return result;
+   }
+}
