@@ -21,7 +21,13 @@ public class SynchronizationController : ControllerBase
   public async Task<SynchronizationSummaryDto> Post()
   {
     _logger.LogInformation("Synchronizing information from congress api service");
-    var summary = await _congressApiService.Synchronize();
+    var summary = new SynchronizationSummaryDto();
+    var congressSummary = await _congressApiService.SynchronizeCongress();
+    var memberSummary = await _congressApiService.SynchronizeCongressMembers(congressSummary.Congress);
+    
+    summary.Congress = congressSummary.Congress;
+    summary.CongressMemberCount = memberSummary.CongressMemberCount;
+   
     return summary;
   }
 }

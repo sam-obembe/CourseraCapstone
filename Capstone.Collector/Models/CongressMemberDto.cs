@@ -8,7 +8,6 @@ public class CongressMemberDto
 	public string? Url { get; set; } =String.Empty;
 	public CongressMemberDepiction? Depiction { get; set; } = new CongressMemberDepiction();
 	public DateTime UpdatedDate { get; set; }
-
 }
 
 

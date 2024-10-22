@@ -1,5 +1,6 @@
 using Capstone.Collector.ApiClient;
 using Capstone.Collector.Models;
+using Capstone.Collector.Utils;
 using Capstone.Common.Entities;
 using Capstone.Common.Repository;
 using Congress = Capstone.Common.Entities.Congress;
@@ -25,7 +26,13 @@ public class CongressApiService
         _congressRepository = congressRepository;
     }
 
-    public async Task<List<CongressMemberDto>> GetMembers(int skip, int batchSize, int congressNumber)
+    // public async Task<List<CongressMember>> GetAllCongressMembers(int congressNumber)
+    // {
+    //     var memberDtos = new List<CongressMemberDto>();
+    //     var membersResponseDto = await _congressApiClient.GetMembersAsync(null, batchSize, congressNumber);
+    // }
+
+    public async Task<List<CongressMemberDto>> GetMembers(int? skip, int? batchSize, int congressNumber)
     {
         var memberDtos = new List<CongressMemberDto>();
         var membersResponseDto = await _congressApiClient.GetMembersAsync(skip, batchSize, congressNumber);
@@ -50,21 +57,25 @@ public class CongressApiService
         return await _congressApiClient.GetCongressAsync();
     }
 
-    public async Task<SynchronizationSummaryDto> Synchronize()
+    public async Task<SynchronizationSummaryDto> SynchronizeCongress()
     {
-        //todo: break up this method
         var congressResponse = await _congressApiClient.GetCongressAsync();
         if (congressResponse == null) return new SynchronizationSummaryDto();
 
-        var congressEntity = ConvertCongressDtoToEntity(congressResponse.Congress);
+        var congressEntity = Converter.ConvertCongressDtoToEntity(congressResponse.Congress);
         _logger.LogInformation("Received congress information for Congress {}", congressResponse.Congress.Number);
         await _congressRepository.CreateAsync(congressEntity);
 
-        var members = await GetMembers(0, 200, congressResponse.Congress.Number);
+       return new SynchronizationSummaryDto { Congress = congressResponse.Congress.Number };
+    }
 
-        _logger.LogInformation("Received members for congress {}. Members found: {}", congressResponse.Congress.Number,
+    public async Task<SynchronizationSummaryDto> SynchronizeCongressMembers(int congressNumber)
+    {
+        var members = await GetMembers(0, 200, congressNumber);
+
+        _logger.LogInformation("Received members for congress {}. Members found: {}", congressNumber,
             members.Count);
-        var memberEntities = members.Where(member => member.BioguideId is not null).Select(ConvertMemberEntityFromDto)
+        var memberEntities = members.Where(member => member.BioguideId is not null).Select(Converter.ConvertMemberEntityFromDto)
             .ToList();
         var existingMemberEntities = _congressMemberRepository.GetAll();
         var existingBioGuideIds = existingMemberEntities.Select(x => x.BioGuideId);
@@ -89,10 +100,7 @@ public class CongressApiService
             _logger.LogError(e, "Failed to synchronize congress");
         }
 
-
-        var summary = new SynchronizationSummaryDto
-            { Congress = congressResponse.Congress.Number, CongressMemberCount = members.Count };
-        return summary;
+        return new SynchronizationSummaryDto { Congress = congressNumber, CongressMemberCount = members.Count };
     }
 
     private List<CongressMember> UpdateMembers(List<CongressMember> existingMemberEntities,
@@ -104,6 +112,8 @@ public class CongressApiService
         {
             var existingMemberEntity = existingMemberEntities.SingleOrDefault(x => x.BioGuideId.Equals(bioGuideId));
             var memberDto = memberDtos.SingleOrDefault(x => x.BioguideId.Equals(bioGuideId));
+
+            //todo : check if existibg entity modified date > today
             var wasModifiedInDb = existingMemberEntity.ModifiedDate != null;
             var updateHasOccured = false;
 
@@ -130,38 +140,4 @@ public class CongressApiService
         return updates;
     }
 
-    private Congress ConvertCongressDtoToEntity(CongressDto dto)
-    {
-        var timeStamp = DateTime.UtcNow;
-        return new Congress
-        {
-            CreatedDate = timeStamp,
-            CreatedBy = Constants.API_NAME,
-            StartYear = dto.StartYear,
-            EndYear = dto.EndYear,
-            Name = dto.Name,
-            Number = dto.Number,
-            ModifiedBy = Constants.API_NAME,
-            ModifiedDate = timeStamp,
-        };
-    }
-
-    private CongressMember ConvertMemberEntityFromDto(CongressMemberDto dto)
-    {
-        var timeStamp = DateTime.UtcNow;
-
-        return new CongressMember
-        {
-            BioGuideId = dto.BioguideId,
-            Name = dto?.Name,
-            ImageUrl = dto.Depiction?.ImageUrl,
-            Attribution = dto.Depiction?.Attribution,
-            State = dto?.State,
-            Url = dto?.Url,
-            CreatedBy = Constants.API_NAME,
-            CreatedDate = timeStamp,
-            ModifiedBy = Constants.API_NAME,
-            ModifiedDate = timeStamp
-        };
-    }
 }

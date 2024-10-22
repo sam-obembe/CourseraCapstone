@@ -10,6 +10,8 @@ public class MembersController : ControllerBase
 {
     private readonly ILogger<MembersController> _logger;
     private readonly CongressApiService _congressApiService;
+    private const int BATCH_SIZE = 100;
+    private const int DEFAULT_SKIP = 0;
     
     public MembersController(ILogger<MembersController> logger, CongressApiService congressApiService)
     {
@@ -19,9 +21,9 @@ public class MembersController : ControllerBase
 
     
     [HttpGet]
-    public async Task<ActionResult<List<CongressMemberDto>>> Get()
+    public async Task<ActionResult<List<CongressMemberDto>>> Get(int congress, int? skip, int? take)
     {
-        var members = await _congressApiService.GetMembers(0, 50,118);
+        var members = await _congressApiService.GetMembers(skip ?? DEFAULT_SKIP, take ?? BATCH_SIZE,congress);
         if (members.Count == 0)
         {
             return NotFound();

@@ -20,9 +20,19 @@ public class CongressApiClient
       _logger = logger;
    }
 
-   public async Task<CongressMemberResponseDto?> GetMembersAsync(int skip, int take,int congressNumber)
+   public async Task<CongressMemberResponseDto?> GetMembersAsync(int? skip, int? take, int congressNumber)
    {
-      var path = $"{GetMembersEndpoint}/{congressNumber}?api_key={_apiKey}&offset={skip}&limit={take}";
+      var path = $"{GetMembersEndpoint}/{congressNumber}?api_key={_apiKey}";
+      if (skip is not null)
+      {
+         path += $"&offset={skip}";
+      }
+
+      if (take is not null)
+      {
+         path += $"&limit={take}";
+      }
+
       _logger.LogInformation($"GET {path}");
       var response = await _httpClient.GetAsync(path);
       var data = await HandleJsonResponse<CongressMemberResponseDto>(response);

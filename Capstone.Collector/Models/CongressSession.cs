@@ -7,5 +7,4 @@ public class CongressSession
     public int Number { get; set; }
     public string StartDate { get; set; }
     public string Type { get; set; }
-    
 }
