@@ -4,6 +4,7 @@ using Capstone.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrator.Migrations
 {
     [DbContext(typeof(CapstoneContext))]
-    partial class CapstoneContextModelSnapshot : ModelSnapshot
+    [Migration("20241024032549_Adding")]
+    partial class Adding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,51 +24,6 @@ namespace Capstone.Migrator.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("Capstone.Common.Entities.Bill", b =>
-                {
-                    b.Property<string>("Number")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("OriginChamberCode")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("Congress")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LatestActionDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("LatestActionText")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("OriginChamber")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("UpdatedDateIncludingText")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Number", "OriginChamberCode");
-
-                    b.ToTable("Bill");
-                });
 
             modelBuilder.Entity("Capstone.Common.Entities.Congress", b =>
                 {

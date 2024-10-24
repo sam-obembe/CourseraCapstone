@@ -8,6 +8,7 @@ public class CapstoneContext : DbContext
 {
     public DbSet<Congress> Congress { get; set; }
     public DbSet<CongressMember> CongressMember { get; set; }
+    public DbSet<Bill> Bill { get; set; }
     
     public CapstoneContext(DbContextOptions<CapstoneContext> options) : base(options) { }
 

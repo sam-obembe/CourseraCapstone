@@ -67,7 +67,16 @@ public class CongressApiClient
       _logger.LogInformation($"{data.ToString()}");
       return data.Result;
    }
-   
+
+   public async Task<BillResponseDto> GetBillAsync(int congress)
+   {
+      throw new NotImplementedException();
+   }
+
+   public async Task<BillResponseDto?> GetMemberBillsAsync(string bioguideId)
+   {
+      throw new NotImplementedException();
+   }
 
    private async Task<T?> HandleJsonResponse<T>(HttpResponseMessage response)
    {
