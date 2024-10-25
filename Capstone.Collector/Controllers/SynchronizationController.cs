@@ -24,9 +24,10 @@ public class SynchronizationController : ControllerBase
     var summary = new SynchronizationSummaryDto();
     var congressSummary = await _congressApiService.SynchronizeCongress();
     var memberSummary = await _congressApiService.SynchronizeCongressMembers(congressSummary.Congress);
-    
+    var billSummary = await _congressApiService.SynchronizeBills(congressSummary.Congress);
     summary.Congress = congressSummary.Congress;
     summary.CongressMemberCount = memberSummary.CongressMemberCount;
+    summary.Bills = billSummary.Bills;
    
     return summary;
   }

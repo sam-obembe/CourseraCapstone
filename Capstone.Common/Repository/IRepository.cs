@@ -2,7 +2,7 @@ using Capstone.Common.Entities;
 
 namespace Capstone.Common.Repository;
 
-public interface IRepository<T> where T : Entity
+public interface IRepository<T>
 {
     public Task<IEnumerable<T>> GetAsync(int? skip, int? take);
 
@@ -13,4 +13,6 @@ public interface IRepository<T> where T : Entity
     public Task<T?> GetByIdAsync(int id);
     
     public Task<List<T>> CreateAsync(List<T> entities);
+    
+    public Task UpdateAsync(List<T> entities);
 }

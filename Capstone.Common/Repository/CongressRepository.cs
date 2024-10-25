@@ -49,4 +49,9 @@ public class CongressRepository(CapstoneContext context, ILogger<CongressReposit
     {
         throw new NotImplementedException();
     }
+
+    public Task UpdateAsync(List<Congress> entities)
+    {
+        throw new NotImplementedException();
+    }
 }

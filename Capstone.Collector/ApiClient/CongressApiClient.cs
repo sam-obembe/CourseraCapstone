@@ -8,6 +8,7 @@ public class CongressApiClient
    private readonly System.Net.Http.HttpClient _httpClient;
    private const string GetMembersEndpoint = "/v3/member/congress";
    private const string GetCongressEndpoint = "/v3/congress/current";
+   private const string GetBillsEndpoint = "/v3/bill";
    private readonly string _apiKey;
    private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
    private readonly ILogger _logger;
@@ -39,38 +40,22 @@ public class CongressApiClient
       return data;
    }
 
-   public CongressMemberResponseDto? GetMembers(int skip, int take, int congressNumber)
-   {
-      _logger.LogInformation("Getting members for {}",congressNumber);
-      var path = $"{GetMembersEndpoint}/{congressNumber}?api_key={_apiKey}&offset={skip}&limit={take}";
-      _logger.LogInformation("{}",path);
-      var response = _httpClient.GetAsync(path).Result;
-      _logger.LogInformation("{}",response.StatusCode);
-      var data = HandleJsonResponse<CongressMemberResponseDto>(response);
-      return data.Result;
-   }
-
-   public CongressResponseDto? GetCongress()
-   {
-      var path = $"{GetCongressEndpoint}?api_key={_apiKey}";
-      var response = _httpClient.GetAsync(path);
-      var data = HandleJsonResponse<CongressResponseDto>(response.Result);
-      _logger.LogInformation($"{data.ToString()}");
-      return data.Result;
-   }
-
    public async Task<CongressResponseDto?> GetCongressAsync()
    {
       var path = $"{GetCongressEndpoint}?api_key={_apiKey}";
       var response = await _httpClient.GetAsync(path);
-      var data = HandleJsonResponse<CongressResponseDto>(response);
+      var data = await HandleJsonResponse<CongressResponseDto>(response);
       _logger.LogInformation($"{data.ToString()}");
-      return data.Result;
+      return data;
    }
 
    public async Task<BillResponseDto> GetBillAsync(int congress)
    {
-      throw new NotImplementedException();
+      var path = $"{GetBillsEndpoint}/{congress}?api_key={_apiKey}";
+      var response = await _httpClient.GetAsync(path);
+      var data = await HandleJsonResponse<BillResponseDto>(response);
+      _logger.LogInformation($"{data.ToString()}");
+      return data;
    }
 
    public async Task<BillResponseDto?> GetMemberBillsAsync(string bioguideId)

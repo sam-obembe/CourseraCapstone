@@ -37,7 +37,7 @@ public class CongressMemberRepository(CapstoneContext context, ILogger<CongressM
         return entities;
     }
 
-    public async Task Update(List<CongressMember> entity)
+    public async Task UpdateAsync(List<CongressMember> entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
         context.CongressMember.UpdateRange(entity);

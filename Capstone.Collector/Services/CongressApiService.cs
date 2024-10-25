@@ -13,10 +13,11 @@ public class CongressApiService
     private readonly CongressApiClient _congressApiClient;
     private readonly CongressMemberRepository _congressMemberRepository;
     private readonly CongressRepository _congressRepository;
+    private readonly BillRepository _billRepository;
     private readonly ILogger<CongressApiService> _logger;
 
     public CongressApiService(IConfiguration configuration, CongressMemberRepository congressMemberRepository,
-        CongressRepository congressRepository, ILogger<CongressApiService> logger)
+        CongressRepository congressRepository, BillRepository billRepository, ILogger<CongressApiService> logger)
     {
         var connectionConfig = configuration.GetSection("ConnectionStrings").Get<Config>();
         _congressApiClient =
@@ -24,6 +25,7 @@ public class CongressApiService
         _congressMemberRepository = congressMemberRepository;
         _logger = logger;
         _congressRepository = congressRepository;
+        _billRepository = billRepository;
     }
 
     // public async Task<List<CongressMember>> GetAllCongressMembers(int congressNumber)
@@ -93,7 +95,7 @@ public class CongressApiService
             var updatedEntities = UpdateMembers(existingEntitiesToUpdate, members);
 
             _logger.LogInformation("Updating {} entries", updatedEntities.Count);
-            await _congressMemberRepository.Update(updatedEntities);
+            await _congressMemberRepository.UpdateAsync(updatedEntities);
         }
         catch (Exception e)
         {
@@ -103,6 +105,15 @@ public class CongressApiService
         return new SynchronizationSummaryDto { Congress = congressNumber, CongressMemberCount = members.Count };
     }
 
+    public async Task<SynchronizationSummaryDto> SynchronizeBills(int congressNumber)
+    {
+        var bills = await _congressApiClient.GetBillAsync(congressNumber);
+        var billEntities = bills.Bills.Select(bill => Converter.ConvertBillDtoToEntity(bill)).ToList();
+        
+        await _billRepository.CreateAsync(billEntities);
+        return new SynchronizationSummaryDto() { Bills = bills.Bills.Count };
+    }
+    
     private List<CongressMember> UpdateMembers(List<CongressMember> existingMemberEntities,
         List<CongressMemberDto> memberDtos)
     {

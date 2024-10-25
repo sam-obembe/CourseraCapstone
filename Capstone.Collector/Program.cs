@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<CongressMemberRepository>();
 builder.Services.AddScoped<CongressRepository>();
+builder.Services.AddScoped<BillRepository>();
 builder.Services.AddScoped<CongressApiService>();
 
 var app = builder.Build();

@@ -39,4 +39,22 @@ public class Converter
             ModifiedDate = timeStamp
         };
     }
+
+    public static Bill ConvertBillDtoToEntity(BillDto dto)
+    {
+        return new Bill
+        {
+            Congress = dto.Congress,
+            Number = dto.Number,
+            LatestActionDate = dto.LatestAction.ActionDate,
+            LatestActionText = dto.LatestAction.Text,
+            OriginChamber = dto.OriginChamber,
+            OriginChamberCode = dto.OriginChamberCode,
+            Type = dto.Type,
+            Title = dto.Title,
+            Url = dto.Url,
+            UpdatedDate = dto.UpdatedDate,
+            UpdatedDateIncludingText = dto.UpdatedDateIncludingText,
+        };
+    }
 }
