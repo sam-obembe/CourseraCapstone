@@ -1,0 +1,29 @@
+﻿services:
+  capstone.web:
+    image: capstoneweb
+    container_name: capstone_web
+    ports:
+      - 9090:8080
+    build:
+      context: .
+      dockerfile: Dockerfile_Web
+  capstone.collector:
+    image: capstonecollector
+    container_name: capstone_collector
+    ports:
+      - 9091:8080
+    env_file:
+      - Capstone.Collector/.env
+    build:
+      context: .
+      dockerfile: Dockerfile_Collector
+  capstone.api:
+    image: capstoneapi
+    container_name: capstone_api
+    ports:
+      - 9092:8080
+    env_file:
+      - Capstone.API/.env
+    build:
+      context: .
+      dockerfile: Dockerfile_Api
