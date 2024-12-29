@@ -5,6 +5,7 @@ using Capstone.Common.Entities;
 using Capstone.Common.Repository;
 using Congress = Capstone.Common.Entities.Congress;
 using Constants = Capstone.Collector.Utils.Constants;
+using System.Linq;
 
 namespace Capstone.Collector.Services;
 
@@ -27,13 +28,7 @@ public class CongressApiService
         _congressRepository = congressRepository;
         _billRepository = billRepository;
     }
-
-    // public async Task<List<CongressMember>> GetAllCongressMembers(int congressNumber)
-    // {
-    //     var memberDtos = new List<CongressMemberDto>();
-    //     var membersResponseDto = await _congressApiClient.GetMembersAsync(null, batchSize, congressNumber);
-    // }
-
+    
     public async Task<List<CongressMemberDto>> GetMembers(int? skip, int? batchSize, int congressNumber)
     {
         var memberDtos = new List<CongressMemberDto>();
@@ -42,13 +37,40 @@ public class CongressApiService
         if (membersResponseDto is null || !membersResponseDto.Members.Any()) return memberDtos.ToList();
 
         memberDtos.AddRange(membersResponseDto.Members);
-        while (membersResponseDto != null && membersResponseDto.Pagination.Next.Length > 0)
+        
+        var remainingCount = membersResponseDto.Pagination.Count - memberDtos.Count;
+        var batches = new List<Dictionary<string,int>>();
+        var batchTakeCount = 0;
+        var batchSkip = memberDtos.Count;
+        
+        while (batchTakeCount < remainingCount)
         {
-            var batchSkip = memberDtos.Count;
-            _logger.LogInformation("Fetching members, skip={},take={} ", batchSkip, batchSize);
-            membersResponseDto = await _congressApiClient.GetMembersAsync(batchSkip, batchSize, congressNumber);
-            if (membersResponseDto?.Members != null) memberDtos.AddRange(membersResponseDto.Members);
+            var batch = new Dictionary<string,int>();
+            batch["skip"] = batchSkip;
+            batch["take"] = batchSize ?? 200;
+            batchTakeCount += batch["take"];
+            batchSkip += batch["skip"];
+            batches.Add(batch);
         }
+        
+        var tasks = new List<Task>();
+        foreach (var batch in batches)
+        {
+            tasks.Add(Task.Run(async() =>
+            {
+                var res = await _congressApiClient.GetMembersAsync(batch["skip"], batch["take"], congressNumber);
+                if(res?.Members != null) memberDtos.AddRange(res.Members);
+            }));
+        }
+        Task.WaitAll(tasks.ToArray());
+        
+        // while (membersResponseDto != null && membersResponseDto.Pagination.Next.Length > 0)
+        // {
+        //     var batchSkip = memberDtos.Count;
+        //     _logger.LogInformation("Fetching members, skip={},take={} ", batchSkip, batchSize);
+        //     membersResponseDto = await _congressApiClient.GetMembersAsync(batchSkip, batchSize, congressNumber);
+        //     if (membersResponseDto?.Members != null) memberDtos.AddRange(membersResponseDto.Members);
+        // }
 
         _logger.LogInformation("Fetching members finished. Total members : {}", memberDtos.Count);
         return memberDtos;
@@ -107,7 +129,10 @@ public class CongressApiService
 
     public async Task<SynchronizationSummaryDto> SynchronizeBills(int congressNumber)
     {
+        var billDtos = new List<BillDto>();
         var bills = await _congressApiClient.GetBillAsync(congressNumber);
+        
+        billDtos.AddRange(bills.Bills);
         var billEntities = bills.Bills.Select(bill => Converter.ConvertBillDtoToEntity(bill)).ToList();
         
         await _billRepository.CreateAsync(billEntities);

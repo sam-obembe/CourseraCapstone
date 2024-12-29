@@ -11,4 +11,6 @@ public class CongressMember:Entity
     public string Url { get; set; }
     public string Attribution { get; set; }
     public string ImageUrl { get; set; }
+    public int SponsoredLegislation { get; set; }
+    public int CosponsoredLegislation { get; set; }
 }

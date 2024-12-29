@@ -2,13 +2,18 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capstone.API", "Capstone.API\Capstone.API.csproj", "{98D6132A-7023-4B55-9E30-CA06DEE84824}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capstone.Web", "Capstone.Web\Capstone.Web.csproj", "{1FFECBD4-26C0-473D-8DFC-CD2A6AB971F2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capstone.Collector", "Capstone.Collector\Capstone.Collector.csproj", "{39B00263-5CA1-4B5F-837F-449EDCF38C3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capstone.Common", "Capstone.Common\Capstone.Common.csproj", "{45CDF9A4-9C3D-4727-BA9E-C8916DECA56E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capstone.Migrator", "Capstone.Migrator\Capstone.Migrator.csproj", "{62178BD7-9C5F-4EEE-A55B-06E4EAB952EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Capstone.Web", "Capstone.Web\Capstone.Web.csproj", "{7A9FEE57-877D-404B-B49F-004EDADA2099}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A47316E-93C9-4B67-9F61-35F2447FCEDF}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,10 +25,6 @@ Global
 		{98D6132A-7023-4B55-9E30-CA06DEE84824}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98D6132A-7023-4B55-9E30-CA06DEE84824}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98D6132A-7023-4B55-9E30-CA06DEE84824}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1FFECBD4-26C0-473D-8DFC-CD2A6AB971F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FFECBD4-26C0-473D-8DFC-CD2A6AB971F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1FFECBD4-26C0-473D-8DFC-CD2A6AB971F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1FFECBD4-26C0-473D-8DFC-CD2A6AB971F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{39B00263-5CA1-4B5F-837F-449EDCF38C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{39B00263-5CA1-4B5F-837F-449EDCF38C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39B00263-5CA1-4B5F-837F-449EDCF38C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -36,5 +37,9 @@ Global
 		{62178BD7-9C5F-4EEE-A55B-06E4EAB952EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62178BD7-9C5F-4EEE-A55B-06E4EAB952EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62178BD7-9C5F-4EEE-A55B-06E4EAB952EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A9FEE57-877D-404B-B49F-004EDADA2099}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A9FEE57-877D-404B-B49F-004EDADA2099}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A9FEE57-877D-404B-B49F-004EDADA2099}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A9FEE57-877D-404B-B49F-004EDADA2099}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

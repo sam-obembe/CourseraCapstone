@@ -1,11 +1,18 @@
+using Capstone.Common;
+using Capstone.Common.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var dbConnectionString = builder.Configuration.GetConnectionString("Database");
+
+builder.SetupDatabase(dbConnectionString);
+Console.WriteLine($"Database connection string: {dbConnectionString}");
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<CongressMemberRepository>();
 
 
 var app = builder.Build();

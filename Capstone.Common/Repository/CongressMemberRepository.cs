@@ -26,6 +26,12 @@ public class CongressMemberRepository(CapstoneContext context, ILogger<CongressM
         throw new NotImplementedException();
     }
 
+    public IEnumerable<CongressMember> Search(string searchTerm)
+    {
+        var members = context.CongressMember.Where(x => x.Name.Contains(searchTerm)).ToList();
+        return members;
+    }
+
     public async Task<List<CongressMember>> CreateAsync(List<CongressMember> entities)
     {
         ArgumentNullException.ThrowIfNull(entities);

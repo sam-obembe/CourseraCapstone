@@ -9,26 +9,44 @@ namespace Capstone.Collector.Controllers;
 [ApiController]
 public class SynchronizationController : ControllerBase
 {
-  private readonly ILogger<SynchronizationController> _logger;
-  private readonly CongressApiService _congressApiService;
-  public SynchronizationController(ILogger<SynchronizationController> logger, CongressApiService congressApiService)
-  {
-    _logger = logger;
-    _congressApiService = congressApiService;
-  }
+    private readonly ILogger<SynchronizationController> _logger;
+    private readonly CongressApiService _congressApiService;
 
-  [HttpPost]
-  public async Task<SynchronizationSummaryDto> Post()
-  {
-    _logger.LogInformation("Synchronizing information from congress api service");
-    var summary = new SynchronizationSummaryDto();
-    var congressSummary = await _congressApiService.SynchronizeCongress();
-    var memberSummary = await _congressApiService.SynchronizeCongressMembers(congressSummary.Congress);
-    var billSummary = await _congressApiService.SynchronizeBills(congressSummary.Congress);
-    summary.Congress = congressSummary.Congress;
-    summary.CongressMemberCount = memberSummary.CongressMemberCount;
-    summary.Bills = billSummary.Bills;
-   
-    return summary;
-  }
+    public SynchronizationController(ILogger<SynchronizationController> logger, CongressApiService congressApiService)
+    {
+        _logger = logger;
+        _congressApiService = congressApiService;
+    }
+
+    [HttpPut("Members")]
+    public async Task<SynchronizationSummaryDto> Post()
+    {
+        _logger.LogInformation("Synchronizing information from congress api service");
+        var summary = new SynchronizationSummaryDto();
+        var congressSummary = await _congressApiService.SynchronizeCongress();
+        var memberSummary = await _congressApiService.SynchronizeCongressMembers(congressSummary.Congress);
+        summary.Congress = congressSummary.Congress;
+        summary.CongressMemberCount = memberSummary.CongressMemberCount;
+        return summary;
+    }
+
+    [HttpPut("Bills")]
+    public async Task<SynchronizationSummaryDto> SynchronizeBills(int congress)
+    {
+        var summary = new SynchronizationSummaryDto();
+        var billSummary = await _congressApiService.SynchronizeBills(congress);
+        summary.Congress = congress;
+        summary.Bills = billSummary.Bills;
+
+        return summary;
+    }
+
+    [HttpPut("Congress")]
+    public async Task<SynchronizationSummaryDto> SynchronizeCongress()
+    {
+        var summary = new SynchronizationSummaryDto();
+        var congressSummary = await _congressApiService.SynchronizeCongress();
+        summary.Congress = congressSummary.Congress;
+        return summary;
+    }
 }
