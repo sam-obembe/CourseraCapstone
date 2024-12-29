@@ -6,7 +6,7 @@
       - 9090:8080
     build:
       context: .
-      dockerfile: Dockerfile_Web
+      dockerfile: Capstone.Web/Dockerfile
   capstone.collector:
     image: capstonecollector
     container_name: capstone_collector
@@ -16,7 +16,7 @@
       - Capstone.Collector/.env
     build:
       context: .
-      dockerfile: Dockerfile_Collector
+      dockerfile: Capstone.Collector/Dockerfile
   capstone.api:
     image: capstoneapi
     container_name: capstone_api
@@ -26,4 +26,4 @@
       - Capstone.API/.env
     build:
       context: .
-      dockerfile: Dockerfile_Api
+      dockerfile: Capstone.API/Dockerfile
