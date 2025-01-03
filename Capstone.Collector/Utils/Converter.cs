@@ -3,7 +3,7 @@ using Capstone.Common.Entities;
 
 namespace Capstone.Collector.Utils;
 
-public class Converter
+public static class Converter
 {
     public static Congress ConvertCongressDtoToEntity(CongressDto dto)
     {
@@ -21,7 +21,7 @@ public class Converter
         };
     }
 
-    public static  CongressMember ConvertMemberEntityFromDto(CongressMemberDto dto)
+    public static  CongressMember ConvertMemberDtoToEntity(CongressMemberDto dto)
     {
         var timeStamp = DateTime.UtcNow;
 

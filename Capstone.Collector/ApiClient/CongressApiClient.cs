@@ -23,27 +23,37 @@ public class CongressApiClient
 
    public async Task<CongressMemberResponseDto?> GetMembersAsync(int? skip, int? take, int congressNumber)
    {
-      var path = $"{GetMembersEndpoint}/{congressNumber}?api_key={_apiKey}";
+      var path = $"{GetMembersEndpoint}/{congressNumber}";
+      if(!string.IsNullOrWhiteSpace(_apiKey))path += $"?api_key={_apiKey}";
+      
+      
       if (skip is not null)
       {
-         path += $"&offset={skip}";
+         var separator = path.Contains("?") ? "&" : "?";
+         path += $"{separator}offset={skip}";   
       }
 
       if (take is not null)
       {
-         path += $"&limit={take}";
+         var separator = path.Contains("?") ? "&" : "?";
+         path += $"{separator}limit={take}";
       }
-
+      
       _logger.LogInformation($"GET {path}");
-      var response = await _httpClient.GetAsync(path);
+      var uri = new Uri(_httpClient.BaseAddress.ToString()+path);
+      
+      var response = await _httpClient.GetAsync(uri);
       var data = await HandleJsonResponse<CongressMemberResponseDto>(response);
       return data;
    }
 
    public async Task<CongressResponseDto?> GetCongressAsync()
    {
-      var path = $"{GetCongressEndpoint}?api_key={_apiKey}";
-      var response = await _httpClient.GetAsync(path);
+      var path = $"{GetCongressEndpoint}";
+      if(!string.IsNullOrWhiteSpace(_apiKey))path += $"?api_key={_apiKey}";
+      var uri = new Uri(_httpClient.BaseAddress.ToString()+path);
+     
+      var response = await _httpClient.GetAsync(uri);
       var data = await HandleJsonResponse<CongressResponseDto>(response);
       _logger.LogInformation($"{data.ToString()}");
       return data;
@@ -51,8 +61,11 @@ public class CongressApiClient
 
    public async Task<BillResponseDto> GetBillAsync(int congress)
    {
-      var path = $"{GetBillsEndpoint}/{congress}?api_key={_apiKey}";
-      var response = await _httpClient.GetAsync(path);
+      var path = $"{GetBillsEndpoint}/{congress}";
+      if(!string.IsNullOrWhiteSpace(_apiKey))path += $"?api_key={_apiKey}";
+      var uri = new Uri(_httpClient.BaseAddress.ToString()+path);
+      
+      var response = await _httpClient.GetAsync(uri);
       var data = await HandleJsonResponse<BillResponseDto>(response);
       _logger.LogInformation($"{data.ToString()}");
       return data;

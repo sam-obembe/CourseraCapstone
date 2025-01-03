@@ -19,13 +19,19 @@ public class SynchronizationController : ControllerBase
     }
 
     [HttpPut("Members")]
-    public async Task<SynchronizationSummaryDto> Post()
+    public async Task<SynchronizationSummaryDto> Post(int? congress)
     {
         _logger.LogInformation("Synchronizing information from congress api service");
         var summary = new SynchronizationSummaryDto();
-        var congressSummary = await _congressApiService.SynchronizeCongress();
-        var memberSummary = await _congressApiService.SynchronizeCongressMembers(congressSummary.Congress);
-        summary.Congress = congressSummary.Congress;
+        
+        var congressNumber = congress;
+        if (congressNumber is null)
+        {
+            var congressSummary = await _congressApiService.SynchronizeCongress();
+            congressNumber = congressSummary.Congress;
+        }
+        var memberSummary = await _congressApiService.SynchronizeCongressMembers((int)congressNumber);
+        summary.Congress = (int)congressNumber;
         summary.CongressMemberCount = memberSummary.CongressMemberCount;
         return summary;
     }

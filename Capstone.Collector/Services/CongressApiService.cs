@@ -45,9 +45,11 @@ public class CongressApiService
         
         while (batchTakeCount < remainingCount)
         {
-            var batch = new Dictionary<string,int>();
-            batch["skip"] = batchSkip;
-            batch["take"] = batchSize ?? 200;
+            var batch = new Dictionary<string,int>
+            {
+                ["skip"] = batchSkip,
+                ["take"] = batchSize ?? 200
+            };
             batchTakeCount += batch["take"];
             batchSkip += batch["skip"];
             batches.Add(batch);
@@ -64,14 +66,6 @@ public class CongressApiService
         }
         Task.WaitAll(tasks.ToArray());
         
-        // while (membersResponseDto != null && membersResponseDto.Pagination.Next.Length > 0)
-        // {
-        //     var batchSkip = memberDtos.Count;
-        //     _logger.LogInformation("Fetching members, skip={},take={} ", batchSkip, batchSize);
-        //     membersResponseDto = await _congressApiClient.GetMembersAsync(batchSkip, batchSize, congressNumber);
-        //     if (membersResponseDto?.Members != null) memberDtos.AddRange(membersResponseDto.Members);
-        // }
-
         _logger.LogInformation("Fetching members finished. Total members : {}", memberDtos.Count);
         return memberDtos;
     }
@@ -99,7 +93,7 @@ public class CongressApiService
 
         _logger.LogInformation("Received members for congress {}. Members found: {}", congressNumber,
             members.Count);
-        var memberEntities = members.Where(member => member.BioguideId is not null).Select(Converter.ConvertMemberEntityFromDto)
+        var memberEntities = members.Where(member => member.BioguideId is not null).Select(Converter.ConvertMemberDtoToEntity)
             .ToList();
         var existingMemberEntities = _congressMemberRepository.GetAll();
         var existingBioGuideIds = existingMemberEntities.Select(x => x.BioGuideId);
