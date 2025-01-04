@@ -13,18 +13,10 @@ Requirements :
 
   - To create migrations using shell scripts
     ```shell
-    ./createMigration.sh InitialMigration
-    ```
-    
-    ```shell
     ./updateDb.sh
     ```
 
   - To create migrations by typing in commands directly
-    ```shell
-    dotnet ef migrations add InitialMigration
-    ```
-    
     ```shell
     dotnet ef database update
     ```
